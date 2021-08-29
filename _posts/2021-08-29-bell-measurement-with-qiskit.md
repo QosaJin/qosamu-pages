@@ -2,11 +2,10 @@
 toc: true
 layout: post
 description: ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで
-categories: [markdown]
+categories: [qiskit, ibm]
 title: IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる
 author: "Kazuki Motohashi"
 ---
-# IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる
 
 こんにちは。普段は機械学習のお仕事をしていますが、Amazon Braketに出会って量子コンピューターに興味津々になっています。
 
