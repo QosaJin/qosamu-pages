@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる | qosamu-pages</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる" />
+<meta name="author" content="Kazuki Motohashi" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで" />
+<meta property="og:description" content="ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで" />
+<link rel="canonical" href="https://qosajin.github.io/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html" />
+<meta property="og:url" content="https://qosajin.github.io/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html" />
+<meta property="og:site_name" content="qosamu-pages" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-29T00:00:00-05:00" />
+<script type="application/ld+json">
+{"datePublished":"2021-08-29T00:00:00-05:00","url":"https://qosajin.github.io/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html","@type":"BlogPosting","headline":"IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる","dateModified":"2021-08-29T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qosajin.github.io/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html"},"author":{"@type":"Person","name":"Kazuki Motohashi"},"description":"ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/qosamu-pages/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qosajin.github.io/qosamu-pages/feed.xml" title="qosamu-pages" /><link rel="shortcut icon" type="image/x-icon" href="/qosamu-pages/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/qosamu-pages/">qosamu-pages</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/qosamu-pages/about/">About Me</a><a class="page-link" href="/qosamu-pages/search/">Search</a><a class="page-link" href="/qosamu-pages/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる</h1><p class="page-description">ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-29T00:00:00-05:00" itemprop="datePublished">
+        Aug 29, 2021
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Kazuki Motohashi</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      3 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/qosamu-pages/categories/#markdown">markdown</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#ibm-quantum-experienceとqiskitでベル状態を作って量子コンピューター実機で測定してみる">IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#はじめに">はじめに</a></li>
+<li class="toc-entry toc-h2"><a href="#ベル状態-bell-state">ベル状態 (Bell state)</a></li>
+<li class="toc-entry toc-h2"><a href="#ibm-quantum-experience">IBM Quantum Experience</a></li>
+<li class="toc-entry toc-h2"><a href="#qiskitを用いた量子回路の構築">Qiskitを用いた量子回路の構築</a></li>
+<li class="toc-entry toc-h2"><a href="#qiskit-aer-シミュレーター">Qiskit Aer シミュレーター</a></li>
+<li class="toc-entry toc-h2"><a href="#ibm-quantum-experienceで使える量子コンピューター">IBM Quantum Experienceで使える量子コンピューター</a></li>
+<li class="toc-entry toc-h2"><a href="#量子コンピューター実機を使った測定">量子コンピューター実機を使った測定</a></li>
+<li class="toc-entry toc-h2"><a href="#シミュレーターと実機の比較">シミュレーターと実機の比較</a></li>
+<li class="toc-entry toc-h2"><a href="#まとめ">まとめ</a></li>
+</ul>
+</li>
+</ul><h1 id="ibm-quantum-experienceとqiskitでベル状態を作って量子コンピューター実機で測定してみる">
+<a class="anchor" href="#ibm-quantum-experience%E3%81%A8qiskit%E3%81%A7%E3%83%99%E3%83%AB%E7%8A%B6%E6%85%8B%E3%82%92%E4%BD%9C%E3%81%A3%E3%81%A6%E9%87%8F%E5%AD%90%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%BC%E5%AE%9F%E6%A9%9F%E3%81%A7%E6%B8%AC%E5%AE%9A%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B" aria-hidden="true"><span class="octicon octicon-link"></span></a>IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる</h1>
+
+<p>こんにちは。普段は機械学習のお仕事をしていますが、Amazon Braketに出会って量子コンピューターに興味津々になっています。</p>
+
+<h2 id="はじめに">
+<a class="anchor" href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB" aria-hidden="true"><span class="octicon octicon-link"></span></a>はじめに</h2>
+
+<p>最近、YouTubeで見れる<a href="https://www.youtube.com/watch?v=R2fyLl7KZXM">慶應の量子コンピューターの集中講義</a>（日本語）や<a href="https://home.cern/news/announcement/computing/online-introductory-lectures-quantum-computing-6-november">2020年11月6日から始まったCERNのセミナー</a>（英語）を見て勉強しています。</p>
+
+<p>前者の講義は2005年に開催されたもので昨今の量子コンピューターブームとは関係なく淡々と<a href="https://www.amazon.co.jp/dp/4274200078">Nielsen &amp; Chuangの本</a>を題材にした理論の解説をしていますが、後者は<a href="https://quantum-computing.ibm.com/">IBM Quantum Experience</a>や<a href="https://algassert.com/quirk">Quirk</a>でグラフィカルに量子回路を作りながらイメージしやすい解説がなされています。</p>
+
+<p>扱っている題材自体も一部異なっていますし、後者は特に量子機械学習にも触れる予定のようなので、片方のコンテンツだけでなく相補的に観るといいんじゃないかと思っています。</p>
+
+<h2 id="ベル状態-bell-state">
+<a class="anchor" href="#%E3%83%99%E3%83%AB%E7%8A%B6%E6%85%8B-bell-state" aria-hidden="true"><span class="octicon octicon-link"></span></a>ベル状態 (Bell state)</h2>
+
+<p>さて、本稿では<a href="https://indico.cern.ch/event/970904/">CERNセミナーの第二回</a>で扱われていたいわゆるベル状態 (Bell state) を作ってみます。コード自体も基本的にはCERNセミナーで紹介されていた<a href="https://indico.cern.ch/event/970904/attachments/2142161/3609810/3.-Hello%2C%20entangled%20world%21.ipynb">こちら</a>を利用します。</p>
+
+<p>ベル状態とは何かという話を最初にしておきます。</p>
+
+<p>独立した2つの量子ビットがあるとき、その系の状態は$\vert 00\rangle$, $\vert 01\rangle$, $\vert 10\rangle$, $\vert 11\rangle$という4つの状態を基底にとった空間上で表されるでしょう。</p>
+
+<p>しかし当然基底の取り方は任意性があるので、上記の基底を回転させてそれぞれの状態が絡み合ったものを基底としても良いわけです。</p>
+
+<p>特に $(\vert 00\rangle + \vert 11\rangle)/\sqrt{2}$, $(\vert 00\rangle - \vert 11\rangle)/\sqrt{2}$, $(\vert 01\rangle + \vert 10\rangle)/\sqrt{2}$, $(\vert 01\rangle - \vert 10\rangle)/\sqrt{2}$ の状態の基底をベル状態と呼びます。</p>
+
+<p>後で見るように、これらの状態はアダマールゲート (Hadamard gate) とCNOT (Controlled NOT) ゲートを組み合わせることで実現できます。</p>
+
+<h2 id="ibm-quantum-experience">
+<a class="anchor" href="#ibm-quantum-experience" aria-hidden="true"><span class="octicon octicon-link"></span></a>IBM Quantum Experience</h2>
+
+<p><a href="https://quantum-computing.ibm.com/">IBM Quantum Experience</a> はIBMが提供する量子コンピュータープラットフォームです。無料で量子コンピューターのシミュレーターや実機にアクセスできる優れものです。</p>
+
+<p><img src="https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/135044/9e128346-5c15-394b-c312-457e742b85b7.png" alt="image.png"></p>
+
+<p>Circuit Composerというサービスを使えば上図のようにGUI上でドラッグアンドドロップするだけでお手軽に量子回路を組み立てられます。また、IBM Quantum ExperienceではQuantum LabというマネージドのJupyter Notebook環境も使えます。ここではQuantum Lab上でQiskit (kiss-kitのように発音) というオープンソースの量子回路開発フレームワークを使ってベル状態を作ってみます。</p>
+
+<h2 id="qiskitを用いた量子回路の構築">
+<a class="anchor" href="#qiskit%E3%82%92%E7%94%A8%E3%81%84%E3%81%9F%E9%87%8F%E5%AD%90%E5%9B%9E%E8%B7%AF%E3%81%AE%E6%A7%8B%E7%AF%89" aria-hidden="true"><span class="octicon octicon-link"></span></a>Qiskitを用いた量子回路の構築</h2>
+
+<p>Qiskitを使って量子回路を構築するのはとても簡単です。まず <code class="language-plaintext highlighter-rouge">qiskit.circuit.QuantumCircuit</code> を使って量子ビットと古典ビットの数を指定します。今回は2量子ビットかつ測定用の2古典ビットを用意します。</p>
+
+<p>そして、0番目の量子ビットにアダマールゲート <code class="language-plaintext highlighter-rouge">h</code> を作用 (<code class="language-plaintext highlighter-rouge">.h(0)</code>) させ、0番目で制御されるCNOTゲートを1番目の量子ビットに作用 (<code class="language-plaintext highlighter-rouge">.cx(0, 1)</code>) させます。最後に、0番目の量子ビットを0番目の古典ビットで測定し、1番目の量子ビットを1番目の古典ビットで測定するという宣言 (<code class="language-plaintext highlighter-rouge">.measure((0, 1), (0, 1))</code>) をしてあげます 。</p>
+
+<pre><code class="language-python:">%matplotlib inline
+
+from qiskit import QuantumCircuit, execute, Aer, IBMQ
+from qiskit.tools.monitor import backend_overview, backend_monitor, job_monitor
+from qiskit.visualization import plot_histogram
+
+# 2つの量子ビットと2つの古典ビット（測定用）からなる回路
+circ_bell = QuantumCircuit(2, 2)
+
+circ_bell.h(0)  # アダマールゲート
+circ_bell.cx(0, 1)  # CNOTゲート
+circ_bell.measure((0, 1), (0, 1)) # 測定
+
+circ_bell.draw(output='mpl')  # 回路の描画
+</code></pre>
+
+<p><code class="language-plaintext highlighter-rouge">.draw(output='mpl')</code> で描画された回路は以下のようになります。</p>
+
+<p><img src="https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/135044/4670fe9c-9e1e-48ab-6e6e-6bee6b5196bc.png" alt="image.png"></p>
+
+<p>こちらの回路の測定を量子コンピューターのシミュレーターと実機で試してみましょう。</p>
+
+<h2 id="qiskit-aer-シミュレーター">
+<a class="anchor" href="#qiskit-aer-%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%BF%E3%83%BC" aria-hidden="true"><span class="octicon octicon-link"></span></a>Qiskit Aer シミュレーター</h2>
+
+<p>まずは<a href="https://qiskit.org/documentation/tutorials/simulators/1_aer_provider.html">Qiskit Aer</a>というシミュレーターを使って計算します。</p>
+
+<p>Qiskit Aerでは<code class="language-plaintext highlighter-rouge">QasmSimulator</code> や <code class="language-plaintext highlighter-rouge">StatevectorSimulator</code> など利用用途が異なるバックエンドが複数用意されています。<code class="language-plaintext highlighter-rouge">QasmSimulator</code> は実機を模したシミュレーターであり出力はカウント数などですが、<code class="language-plaintext highlighter-rouge">StatevectorSimulator</code> では終状態のベクトルを得ることができます。</p>
+
+<p><code class="language-plaintext highlighter-rouge">QasmSimulator</code> を使った測定と結果は以下の通りです。</p>
+
+<pre><code class="language-python:"># QasmSimulatorバックエンドを取得
+backend = Aer.get_backend('qasm_simulator')
+# circ_bellをQasmSimulatorで1000回測定
+job = execute(circ_bell, backend, shots=1000)
+
+# 測定結果の取得
+counts = job.result().get_counts()
+
+print(counts)
+# &gt;&gt;&gt; {'00': 493, '11': 507}
+</code></pre>
+
+<p>量子コンピューターでは出力は確率的に決まるものであり、一回測定するだけでは求めたい結果が得られません。（もちろん理想的には測定したら必ず0が出力される、といった状態を作ることもできますが、実機ではノイズもあるので結局複数回の測定は必要になるかと思います。）</p>
+
+<p>ここでは1000回同じ測定を行い、両方のビットが0、もしくは1である確率が大体半々であるという結果が得られました。（測定回数（ショット数）をさらに増やせば誤差は小さくなっていくでしょう。）</p>
+
+<p>初期状態が $\vert 00\rangle$ の場合、上記の回路に通すと終状態は $(\vert 00\rangle + \vert 11\rangle)/\sqrt{2}$ になりますので、00と11が半々というのは期待通りの結果が得られたことになります。</p>
+
+<h2 id="ibm-quantum-experienceで使える量子コンピューター">
+<a class="anchor" href="#ibm-quantum-experience%E3%81%A7%E4%BD%BF%E3%81%88%E3%82%8B%E9%87%8F%E5%AD%90%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%BC" aria-hidden="true"><span class="octicon octicon-link"></span></a>IBM Quantum Experienceで使える量子コンピューター</h2>
+
+<p>では、次に量子コンピューター実機で試してみましょう。</p>
+
+<p>その前にIBM Quantum Experienceではどんな量子コンピューターが用意されているかを確認しましょう。</p>
+
+<p>（なお、以下のコードはマネージドJupyter NotebookのQuantum Lab上であれば問題なく動作するはずですが、ローカルで同じコードを実行しようとするとIBM Quantum Experienceのクレデンシャルを求められると思います。）</p>
+
+<pre><code class="language-python:">provider = IBMQ.load_account()
+backend_overview()
+</code></pre>
+
+<p>出力は以下のようになります。それぞれのパラメーターの意味は次のようになります。</p>
+
+<ul>
+  <li>それぞれの量子コンピューターの名前</li>
+  <li>用いることのできる量子ビットの数 (Num. Qubits)</li>
+  <li>現在キューに溜まってるジョブ数 (Pending Jobs)</li>
+  <li>一番空いているか否か (Least busy)</li>
+  <li>運転中か否か (Operational)</li>
+  <li>$\vert 1\rangle$ が $\vert 0\rangle$ にdecayしてしまうまでの平均時間 (Avg. T1) [$\mu$s]</li>
+  <li>量子もつれの状態が解消してしまうまでの平均時間 (Avg. T2) [$\mu$s]</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ibmq_santiago                ibmq_athens                  ibmq_armonk
+-------------                -----------                  -----------
+Num. Qubits:  5              Num. Qubits:  5              Num. Qubits:  1
+Pending Jobs: 25             Pending Jobs: 8              Pending Jobs: 1
+Least busy:   False          Least busy:   False          Least busy:   True
+Operational:  True           Operational:  True           Operational:  True
+Avg. T1:      152.4          Avg. T1:      66.7           Avg. T1:      157.9
+Avg. T2:      113.5          Avg. T2:      84.3           Avg. T2:      190.0
+
+
+
+ibmq_valencia                ibmq_ourense                 ibmq_vigo
+-------------                ------------                 ---------
+Num. Qubits:  5              Num. Qubits:  5              Num. Qubits:  5
+Pending Jobs: 105            Pending Jobs: 18             Pending Jobs: 53
+Least busy:   False          Least busy:   False          Least busy:   False
+Operational:  True           Operational:  True           Operational:  True
+Avg. T1:      90.0           Avg. T1:      98.2           Avg. T1:      122.8
+Avg. T2:      52.9           Avg. T2:      71.8           Avg. T2:      85.1
+
+
+
+ibmqx2                       ibmq_16_melbourne
+------                       -----------------
+Num. Qubits:  5              Num. Qubits:  15
+Pending Jobs: 912            Pending Jobs: 1279
+Least busy:   False          Least busy:   False
+Operational:  True           Operational:  False
+Avg. T1:      54.3           Avg. T1:      55.2
+Avg. T2:      38.1           Avg. T2:      59.4
+</code></pre></div></div>
+
+<p>それぞれの量子コンピューターの仕様の詳細を見るには <a href="https://qiskit.org/documentation/stubs/qiskit.tools.backend_monitor.html"><code class="language-plaintext highlighter-rouge">qiskit.tools.backend_monitor</code></a> を用います。</p>
+
+<pre><code class="language-python:">backend_monitor(provider.get_backend("ibmq_valencia"))
+</code></pre>
+
+<p>出力は以下のようになります。表示は指定されたバックエンドの名前によって変化します。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ibmq_valencia
+=============
+Configuration
+-------------
+    n_qubits: 5
+    operational: True
+    status_msg: active
+    pending_jobs: 0
+    backend_version: 1.4.0
+    basis_gates: ['id', 'u1', 'u2', 'u3', 'cx']
+    local: False
+    simulator: False
+    meas_levels: [1, 2]
+    parametric_pulses: ['gaussian', 'gaussian_square', 'drag', 'constant']
+    dtm: 2.222222222222222e-19
+    credits_required: True
+    dt: 2.222222222222222e-19
+    max_shots: 8192
+    meas_map: [[0, 1, 2, 3, 4]]
+    n_registers: 1
+    max_experiments: 75
+    memory: True
+    uchannels_enabled: True
+...（以下略）
+</code></pre></div></div>
+
+<p>ちなみにIBM Quantum Experienceのトップページの右側にあるバックエンドのリストをクリックすると綺麗なトポロジーのグラフや詳細のパラメーターを確認することもできます。</p>
+
+<p><img src="https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/135044/fb0a4f2c-dfb6-6d4e-5555-84715d43a43c.png" alt="image.png"></p>
+
+<h2 id="量子コンピューター実機を使った測定">
+<a class="anchor" href="#%E9%87%8F%E5%AD%90%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%BC%E5%AE%9F%E6%A9%9F%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E6%B8%AC%E5%AE%9A" aria-hidden="true"><span class="octicon octicon-link"></span></a>量子コンピューター実機を使った測定</h2>
+
+<p>前置きが長くなりましたが、量子コンピューター実機を使った測定をしてみましょう。</p>
+
+<p>上記の Pending Jobs のパラメーターの説明からもわかるように、IBM Quantum Experienceの量子コンピューターは順番待ちで利用するものです。</p>
+
+<p>いちいち空いているバックエンドを探して指定するのは大変ですが、実は <code class="language-plaintext highlighter-rouge">least_busy</code> という関数を使うと一番空いているバックエンドを選択してくれます。便利ですね。</p>
+
+<p><code class="language-plaintext highlighter-rouge">provider.backends</code> に条件を入れて <code class="language-plaintext highlighter-rouge">least_busy</code> で囲ってあげれば、条件に合うの中から空いているものが選ばれます。</p>
+
+<pre><code class="language-python:">from qiskit.providers.ibmq import least_busy
+
+# We execute on the least busy device (among the actual quantum computers)
+backend = least_busy(
+    provider.backends(
+        operational=True,  # 稼働中のバックエンド
+        simulator=False,   # シミュレーターでなく実機
+        status_msg='active',
+        filters=lambda x: x.configuration().n_qubits &gt; 1  # 量子ビット数が2以上
+    )
+)
+# 選択されたバックエンドの名前を表示
+print("We are executing on...", backend)
+# 待ち状態のジョブ数を表示
+print("It has", backend.status().pending_jobs, "pending jobs")
+
+job_exp = execute(circ_bell, backend=backend)  # shot数のデフォルトは1,024回
+job_monitor(job_exp)
+# &gt;&gt;&gt;
+# We are executing on... ibmq_athens
+# It has 9 pending jobs
+# Job Status: job has successfully run
+</code></pre>
+
+<p>今回は <code class="language-plaintext highlighter-rouge">ibmq_athens</code> という実機の量子コンピューターが選択されました。私の前に9個のジョブが溜まっていましたが、10分程度待ったらジョブが実行されました。</p>
+
+<h2 id="シミュレーターと実機の比較">
+<a class="anchor" href="#%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%BF%E3%83%BC%E3%81%A8%E5%AE%9F%E6%A9%9F%E3%81%AE%E6%AF%94%E8%BC%83" aria-hidden="true"><span class="octicon octicon-link"></span></a>シミュレーターと実機の比較</h2>
+
+<p>最後に実機で得られた測定結果をプロットし、<code class="language-plaintext highlighter-rouge">QasmSimulator</code> の結果を比較してみます。</p>
+
+<pre><code class="language-python:">result_exp = job_exp.result()
+counts_exp = result_exp.get_counts(circ_bell)
+plot_histogram([counts_exp, counts], legend=['Device', 'Simulator'])
+</code></pre>
+
+<p><img src="https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/135044/f8f6539b-19a6-c63c-27b0-67d406f14ec6.png" alt="image.png"></p>
+
+<p>横軸は測定結果のビットで、縦軸がそれぞれの確率を表しています。青色が実機で赤色がシミュレーターの測定結果です。</p>
+
+<p>期待通り、量子コンピューター実機でも 00 と 11 の状態が半々であるという結果になりました。
+しかし、実機では多少 01 や 10 の結果も含まれてしまっています。これは実機におけるゲート操作のエラーや測定の誤差に起因するものでしょう。
+今回は QasmSimulator にノイズの設定をしなかったので、シミュレーター上では理想的な 00/11 のみの状態が再現されていました。</p>
+
+<h2 id="まとめ">
+<a class="anchor" href="#%E3%81%BE%E3%81%A8%E3%82%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>まとめ</h2>
+
+<p>今回はIBM Quantum ExperienceのマネージドJupyter NotebookサービスであるQuantum Lab上で量子回路を構築してみました。</p>
+
+<p>アダマールゲートとCNOTゲートを用いて、ベル状態のひとつ $(\vert 00\rangle + \vert 11\rangle)/\sqrt{2}$ を作る回路をQiskitで構築しました。</p>
+
+<p>シミュレーターと実機で測定をしたところ、出力はほとんど 00 もしくは 11 となり、期待された状態が得られていることがわかりました。</p>
+
+<p><code class="language-plaintext highlighter-rouge">least_busy</code> 関数を用いることでIBMが提供する量子コンピューターのうち一番空いているものを取得する方法に関しても解説しました。</p>
+
+  </div><a class="u-url" href="/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/qosamu-pages/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/qosamu-pages/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/qosamu-pages/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Awesome QosaJin Blog</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/QosaJin" title="QosaJin"><svg class="svg-icon grey"><use xlink:href="/qosamu-pages/assets/minima-social-icons.svg#github"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
