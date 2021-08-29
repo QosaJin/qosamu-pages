@@ -4,6 +4,7 @@ layout: post
 description: ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで
 categories: [markdown]
 title: IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる
+author: "Kazuki Motohashi"
 ---
 # IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる
 
