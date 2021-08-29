@@ -11,13 +11,13 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで" />
 <meta property="og:description" content="ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで" />
-<link rel="canonical" href="https://qosajin.github.io/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html" />
-<meta property="og:url" content="https://qosajin.github.io/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html" />
+<link rel="canonical" href="https://qosajin.github.io/qosamu-pages/qiskit/ibm/2021/08/29/bell-measurement-with-qiskit.html" />
+<meta property="og:url" content="https://qosajin.github.io/qosamu-pages/qiskit/ibm/2021/08/29/bell-measurement-with-qiskit.html" />
 <meta property="og:site_name" content="qosamu-pages" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2021-08-29T00:00:00-05:00" />
 <script type="application/ld+json">
-{"datePublished":"2021-08-29T00:00:00-05:00","url":"https://qosajin.github.io/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html","@type":"BlogPosting","headline":"IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる","dateModified":"2021-08-29T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qosajin.github.io/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html"},"author":{"@type":"Person","name":"Kazuki Motohashi"},"description":"ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで","@context":"https://schema.org"}</script>
+{"datePublished":"2021-08-29T00:00:00-05:00","url":"https://qosajin.github.io/qosamu-pages/qiskit/ibm/2021/08/29/bell-measurement-with-qiskit.html","@type":"BlogPosting","headline":"IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる","dateModified":"2021-08-29T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qosajin.github.io/qosamu-pages/qiskit/ibm/2021/08/29/bell-measurement-with-qiskit.html"},"author":{"@type":"Person","name":"Kazuki Motohashi"},"description":"ベル状態の解説からIBM量子コンピューター実機でのプログラム実行まで","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/qosamu-pages/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qosajin.github.io/qosamu-pages/feed.xml" title="qosamu-pages" /><link rel="shortcut icon" type="image/x-icon" href="/qosamu-pages/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
@@ -103,7 +103,10 @@ window.onload = wrap_img;
     
       <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
       
-        <a class="category-tags-link" href="/qosamu-pages/categories/#markdown">markdown</a>
+        <a class="category-tags-link" href="/qosamu-pages/categories/#qiskit">qiskit</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/qosamu-pages/categories/#ibm">ibm</a>
         
       
       </p>
@@ -113,8 +116,6 @@ window.onload = wrap_img;
 
   <div class="post-content e-content" itemprop="articleBody">
     <ul class="section-nav">
-<li class="toc-entry toc-h1"><a href="#ibm-quantum-experienceとqiskitでベル状態を作って量子コンピューター実機で測定してみる">IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる</a>
-<ul>
 <li class="toc-entry toc-h2"><a href="#はじめに">はじめに</a></li>
 <li class="toc-entry toc-h2"><a href="#ベル状態-bell-state">ベル状態 (Bell state)</a></li>
 <li class="toc-entry toc-h2"><a href="#ibm-quantum-experience">IBM Quantum Experience</a></li>
@@ -124,12 +125,7 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h2"><a href="#量子コンピューター実機を使った測定">量子コンピューター実機を使った測定</a></li>
 <li class="toc-entry toc-h2"><a href="#シミュレーターと実機の比較">シミュレーターと実機の比較</a></li>
 <li class="toc-entry toc-h2"><a href="#まとめ">まとめ</a></li>
-</ul>
-</li>
-</ul><h1 id="ibm-quantum-experienceとqiskitでベル状態を作って量子コンピューター実機で測定してみる">
-<a class="anchor" href="#ibm-quantum-experience%E3%81%A8qiskit%E3%81%A7%E3%83%99%E3%83%AB%E7%8A%B6%E6%85%8B%E3%82%92%E4%BD%9C%E3%81%A3%E3%81%A6%E9%87%8F%E5%AD%90%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%83%BC%E5%AE%9F%E6%A9%9F%E3%81%A7%E6%B8%AC%E5%AE%9A%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B" aria-hidden="true"><span class="octicon octicon-link"></span></a>IBM Quantum ExperienceとQiskitでベル状態を作って量子コンピューター実機で測定してみる</h1>
-
-<p>こんにちは。普段は機械学習のお仕事をしていますが、Amazon Braketに出会って量子コンピューターに興味津々になっています。</p>
+</ul><p>こんにちは。普段は機械学習のお仕事をしていますが、Amazon Braketに出会って量子コンピューターに興味津々になっています。</p>
 
 <h2 id="はじめに">
 <a class="anchor" href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB" aria-hidden="true"><span class="octicon octicon-link"></span></a>はじめに</h2>
@@ -380,7 +376,7 @@ plot_histogram([counts_exp, counts], legend=['Device', 'Simulator'])
 
 <p><code class="language-plaintext highlighter-rouge">least_busy</code> 関数を用いることでIBMが提供する量子コンピューターのうち一番空いているものを取得する方法に関しても解説しました。</p>
 
-  </div><a class="u-url" href="/qosamu-pages/markdown/2021/08/29/bell-measurement-with-qiskit.html" hidden></a>
+  </div><a class="u-url" href="/qosamu-pages/qiskit/ibm/2021/08/29/bell-measurement-with-qiskit.html" hidden></a>
 </article>
       </div>
     </main><footer class="site-footer h-card">
