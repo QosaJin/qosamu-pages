@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Qiskit のローカル環境セットアップをしてみる | qosamu-pages</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Qiskit のローカル環境セットアップをしてみる" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Awesome QosaJin Blog" />
+<meta property="og:description" content="Awesome QosaJin Blog" />
+<link rel="canonical" href="https://qosajin.github.io/qosamu-pages/2021/08/31/qiskit-local-installation.html" />
+<meta property="og:url" content="https://qosajin.github.io/qosamu-pages/2021/08/31/qiskit-local-installation.html" />
+<meta property="og:site_name" content="qosamu-pages" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-31T00:00:00-05:00" />
+<script type="application/ld+json">
+{"datePublished":"2021-08-31T00:00:00-05:00","url":"https://qosajin.github.io/qosamu-pages/2021/08/31/qiskit-local-installation.html","@type":"BlogPosting","headline":"Qiskit のローカル環境セットアップをしてみる","dateModified":"2021-08-31T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://qosajin.github.io/qosamu-pages/2021/08/31/qiskit-local-installation.html"},"description":"Awesome QosaJin Blog","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/qosamu-pages/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://qosajin.github.io/qosamu-pages/feed.xml" title="qosamu-pages" /><link rel="shortcut icon" type="image/x-icon" href="/qosamu-pages/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/qosamu-pages/">qosamu-pages</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/qosamu-pages/about/">About Me</a><a class="page-link" href="/qosamu-pages/search/">Search</a><a class="page-link" href="/qosamu-pages/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Qiskit のローカル環境セットアップをしてみる</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-31T00:00:00-05:00" itemprop="datePublished">
+        Aug 31, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      3 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/QosaJin/qosamu-pages/tree/master/_notebooks/2021-08-31-qiskit-local-installation.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/qosamu-pages/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/QosaJin/qosamu-pages/master?filepath=_notebooks%2F2021-08-31-qiskit-local-installation.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/qosamu-pages/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/QosaJin/qosamu-pages/blob/master/_notebooks/2021-08-31-qiskit-local-installation.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/qosamu-pages/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-08-31-qiskit-local-installation.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="&#12399;&#12376;&#12417;&#12395;">&#12399;&#12376;&#12417;&#12395;<a class="anchor-link" href="#&#12399;&#12376;&#12417;&#12395;"> </a></h2><p>最近 (主に) Qiskit を使って量子コンピュータの勉強をしています。Qiskit は IBM が開発した量子コンピューティング用の python library で、Software 上で量子回路を作り、それをシミュレータ (古典コンピュータ上で量子計算を行なう) で動かしたり、実機で動かして検証することができます。
+ちょっと試してみるとか、予め用意されたサンプルコードを手っ取り早く動かしたいという場合は <a href="https://quantum-computing.ibm.com/">IBM Quantum</a> でアカウントを作り、そのままクラウド上で動かすと良いです。</p>
+<p>ただし、サーバ側のご機嫌が悪い時はアクセスに時間がかかったり、そもそもアクセスできないこともあるし、ある程度 Qiskit を使ってコードを書けるようになったりした場合にはローカル環境で使えると便利です。そこで今回は Qiskit のローカル環境セットアップ時の手順のメモを残しておきます。</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="&#28310;&#20633;">&#28310;&#20633;<a class="anchor-link" href="#&#28310;&#20633;"> </a></h2><p>今回は macOS Big Sur (Version 11.4) でインストールしています。
+Qiskit documentation の <a href="https://qiskit.org/documentation/getting_started.html">Getting Started</a> -&gt; Installation -&gt; Start locally を参照しました。
+前準備としてドキュメントにある通り、conda で python のパッケージ管理をすることにしました。
+あまり大きなパッケージをインストールしたくなかったので、<a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a> をインストールしました。Python の version は 3.9 です。</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="conda-&#12391;-Qiskit-&#29992;&#12398;&#29872;&#22659;&#12434;&#29992;&#24847;">conda &#12391; Qiskit &#29992;&#12398;&#29872;&#22659;&#12434;&#29992;&#24847;<a class="anchor-link" href="#conda-&#12391;-Qiskit-&#29992;&#12398;&#29872;&#22659;&#12434;&#29992;&#24847;"> </a></h2><p>まずは conda で Qiskit 用の環境 'Qiskit' を用意します。</p>
+
+<pre><code>(base) tsubasa-cc$ conda create -n Qiskit python=3
+----- snip -----
+
+The following NEW packages will be INSTALLED:
+
+  ca-certificates    pkgs/main/osx-64::ca-certificates-2021.7.5-hecd8cb5_1
+  certifi            pkgs/main/osx-64::certifi-2021.5.30-py39hecd8cb5_0
+  libcxx             pkgs/main/osx-64::libcxx-10.0.0-1
+  libffi             pkgs/main/osx-64::libffi-3.3-hb1e8313_2
+  ncurses            pkgs/main/osx-64::ncurses-6.2-h0a44026_1
+  openssl            pkgs/main/osx-64::openssl-1.1.1k-h9ed2024_0
+  pip                pkgs/main/osx-64::pip-21.2.4-py37hecd8cb5_0
+  python             pkgs/main/osx-64::python-3.9.6-h88f2d9e_1
+  readline           pkgs/main/osx-64::readline-8.1-h9ed2024_0
+  setuptools         pkgs/main/osx-64::setuptools-52.0.0-py39hecd8cb5_0
+  sqlite             pkgs/main/osx-64::sqlite-3.36.0-hce871da_0
+  tk                 pkgs/main/osx-64::tk-8.6.10-hb0a8c7a_0
+  tzdata             pkgs/main/noarch::tzdata-2021a-h5d7bf9c_0
+  wheel              pkgs/main/noarch::wheel-0.37.0-pyhd3eb1b0_0
+  xz                 pkgs/main/osx-64::xz-5.2.5-h1de35cc_0
+  zlib               pkgs/main/osx-64::zlib-1.2.11-h1de35cc_3
+
+
+Proceed ([y]/n)? y
+----- snip -----
+#
+# To activate this environment, use
+#
+#     $ conda activate Qiskit
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate</code></pre>
+<p>create できたら、activate します。</p>
+
+<pre><code>(base) tsubasa-cc$ conda activate Qiskit
+(Qiskit) tsubasa-cc$</code></pre>
+<p>activate すると、プロンプトの左端が設定した環境名 'Qiskit' に変わります。この 'Qiskit' 環境の中で必要なものをインストールしていきます。</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="qiskit-&#12398;&#12452;&#12531;&#12473;&#12488;&#12540;&#12523;">qiskit &#12398;&#12452;&#12531;&#12473;&#12488;&#12540;&#12523;<a class="anchor-link" href="#qiskit-&#12398;&#12452;&#12531;&#12473;&#12488;&#12540;&#12523;"> </a></h2><p>pip は conda create でインストール済みなので、あとは pip install qiskit で qiskit をインストールします。</p>
+
+<pre><code>(Qiskit) tsubasa-cc$ pip install qiskit
+Collecting qiskit
+  Downloading qiskit-0.29.0.tar.gz (12 kB)
+Collecting qiskit-terra==0.18.1
+  Downloading qiskit_terra-0.18.1-cp39-cp39-macosx_10_9_x86_64.whl (5.3 MB)
+----- snip -----
+Successfully installed attrs-21.2.0 cffi-1.14.6 charset-normalizer-2.0.4 cryptography-3.4.7 dill-0.3.4 dlx-1.0.4 docplex-2.21.207 fastdtw-0.3.4 fastjsonschema-2.15.1 h5py-3.2.1 idna-3.2 inflection-0.5.1 joblib-1.0.1 jsonschema-3.2.0 lxml-4.6.3 more-itertools-8.8.0 mpmath-1.2.1 multitasking-0.0.9 ntlm-auth-1.5.0 numpy-1.21.2 pandas-1.3.2 ply-3.11 psutil-5.8.0 pybind11-2.7.1 pycparser-2.20 pyrsistent-0.18.0 python-constraint-1.4.0 python-dateutil-2.8.2 pytz-2021.1 qiskit-0.29.0 qiskit-aer-0.8.2 qiskit-aqua-0.9.4 qiskit-ibmq-provider-0.16.0 qiskit-ignis-0.6.0 qiskit-terra-0.18.1 quandl-3.6.1 requests-2.26.0 requests-ntlm-1.1.0 retworkx-0.9.0 scikit-learn-0.24.2 scipy-1.7.1 six-1.16.0 symengine-0.7.2 sympy-1.8 threadpoolctl-2.2.0 tweedledum-1.1.0 urllib3-1.26.6 websocket-client-1.2.1 yfinance-0.1.62</code></pre>
+<p>Successfully installed ... と出れば完了です。qiskit だけでなく、qiskit を利用するのに標準で使うパッケージ達もインストールし手くれるようです。
+Python/Qiskit を CLI のみで使うならばこれだけで良いのですが、Jupyter Notebook で動かすのが色々と便利なので、その場合は [visualization] のサポートも必要です。</p>
+
+<pre><code>(Qiskit) tsubasa-cc$ pip install qiskit[visualization]
+----- snip -----
+Successfully built pylatexenc
+Installing collected packages: ipython-genutils, traitlets, wcwidth, tornado, pyzmq, pyparsing, ptyprocess, parso, nest-asyncio, jupyter-core, entrypoints, webencodings, pygments, prompt-toolkit, pickleshare, pexpect, packaging, nbformat, matplotlib-inline, MarkupSafe, jupyter-client, jedi, decorator, backcall, appnope, testpath, pandocfilters, nbclient, mistune, jupyterlab-pygments, jinja2, ipython, defusedxml, debugpy, bleach, terminado, Send2Trash, prometheus-client, nbconvert, ipykernel, argon2-cffi, pillow, notebook, kiwisolver, cycler, widgetsnbextension, matplotlib, jupyterlab-widgets, seaborn, pylatexenc, pydot, ipywidgets
+Successfully installed MarkupSafe-2.0.1 Send2Trash-1.8.0 appnope-0.1.2 argon2-cffi-20.1.0 backcall-0.2.0 bleach-4.0.0 cycler-0.10.0 debugpy-1.4.1 decorator-5.0.9 defusedxml-0.7.1 entrypoints-0.3 ipykernel-6.2.0 ipython-7.26.0 ipython-genutils-0.2.0 ipywidgets-7.6.3 jedi-0.18.0 jinja2-3.0.1 jupyter-client-7.0.1 jupyter-core-4.7.1 jupyterlab-pygments-0.1.2 jupyterlab-widgets-1.0.0 kiwisolver-1.3.1 matplotlib-3.4.3 matplotlib-inline-0.1.2 mistune-0.8.4 nbclient-0.5.4 nbconvert-6.1.0 nbformat-5.1.3 nest-asyncio-1.5.1 notebook-6.4.3 packaging-21.0 pandocfilters-1.4.3 parso-0.8.2 pexpect-4.8.0 pickleshare-0.7.5 pillow-8.3.1 prometheus-client-0.11.0 prompt-toolkit-3.0.20 ptyprocess-0.7.0 pydot-1.4.2 pygments-2.10.0 pylatexenc-2.10 pyparsing-2.4.7 pyzmq-22.2.1 seaborn-0.11.2 terminado-0.11.1 testpath-0.5.0 tornado-6.1 traitlets-5.0.5 wcwidth-0.2.5 webencodings-0.5.1 widgetsnbextension-3.5.1</code></pre>
+<p>これで、Jupyter 関連や matplotlib (結果をプロットするのに多用する！) などのインストールも完了しました！</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Qiskit-&#12434;&#35430;&#12375;&#12390;&#12415;&#12427;&#65281;">Qiskit &#12434;&#35430;&#12375;&#12390;&#12415;&#12427;&#65281;<a class="anchor-link" href="#Qiskit-&#12434;&#35430;&#12375;&#12390;&#12415;&#12427;&#65281;"> </a></h2><p>早速 Qiskit を試しに使ってみましょう。ここでは Qiskit Documentation にある [Introduction to Qiskit] のコードをそのまま動かしてみます。
+まずはターミナルで jupyter-notebook を実行すると Jupyter Notebook が起動してブラウザが自動で開くので、新しいファイルを開きます。
+そこでとりあえず Introduction to Qiskit のある以下のコードをコピペして実行してみます。</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">transpile</span>
+<span class="kn">from</span> <span class="nn">qiskit.providers.aer</span> <span class="kn">import</span> <span class="n">QasmSimulator</span>
+<span class="kn">from</span> <span class="nn">qiskit.visualization</span> <span class="kn">import</span> <span class="n">plot_histogram</span>
+
+<span class="c1"># Use Aer&#39;s qasm_simulator</span>
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">QasmSimulator</span><span class="p">()</span>
+
+<span class="c1"># Create a Quantum Circuit acting on the q register</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Add a H gate on qubit 0</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Add a CX (CNOT) gate on control qubit 0 and target qubit 1</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Map the quantum measurement to the classical bits</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">measure</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># compile the circuit down to low-level QASM instructions</span>
+<span class="c1"># supported by the backend (not needed for simple circuits)</span>
+<span class="n">compiled_circuit</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">simulator</span><span class="p">)</span>
+
+<span class="c1"># Execute the circuit on the qasm simulator</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">compiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="c1"># Grab results from the job</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+
+<span class="c1"># Returns counts</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_counts</span><span class="p">(</span><span class="n">compiled_circuit</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Total count for 00 and 11 are:&quot;</span><span class="p">,</span><span class="n">counts</span><span class="p">)</span>
+
+<span class="c1"># Draw the circuit</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Total count for 00 and 11 are: {&#39;11&#39;: 510, &#39;00&#39;: 490}
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<pre style="word-wrap: normal;white-space: pre;background: #fff0;line-height: 1.1;font-family: &quot;Courier New&quot;,Courier,monospace">     ┌───┐     ┌─┐   
+q_0: ┤ H ├──■──┤M├───
+     └───┘┌─┴─┐└╥┘┌─┐
+q_1: ─────┤ X ├─╫─┤M├
+          └───┘ ║ └╥┘
+c: 2/═══════════╩══╩═
+                0  1 </pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>すると何やら量子回路が作成できました！
+そしてこれまたコピペで plot_histogram してみます。</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_histogram</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="data:image/png;base64,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
+" />
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+" />
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>ヒストグラムも描画できました！
+'00' と '11' の2つの状態がおおよそ半々ずつの状態ということでしょうね。
+今回はコードの中身には深入りしません。今後1つずつ見ていこうかと思います。</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Version-&#24773;&#22577;">Version &#24773;&#22577;<a class="anchor-link" href="#Version-&#24773;&#22577;"> </a></h2><p>最後に、Qiskit のドキュメントに倣って、qiskit/python/OS などの version 情報を載せておきます。
+以下を実行するだけで表形式で綺麗に出してくれます。便利ですね。</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">qiskit.tools.jupyter</span>
+<span class="o">%</span><span class="k">qiskit_version_table</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<h3>Version Information</h3><table><tr><th>Qiskit Software</th><th>Version</th></tr><tr><td><code>qiskit-terra</code></td><td>0.18.1</td></tr><tr><td><code>qiskit-aer</code></td><td>0.8.2</td></tr><tr><td><code>qiskit-ignis</code></td><td>0.6.0</td></tr><tr><td><code>qiskit-ibmq-provider</code></td><td>0.16.0</td></tr><tr><td><code>qiskit-aqua</code></td><td>0.9.4</td></tr><tr><td><code>qiskit</code></td><td>0.29.0</td></tr><tr><th>System information</th></tr><tr><td>Python</td><td>3.9.6 (default, Aug 18 2021, 12:38:10) 
+[Clang 10.0.0 ]</td></tr><tr><td>OS</td><td>Darwin</td></tr><tr><td>CPUs</td><td>6</td></tr><tr><td>Memory (Gb)</td><td>16.0</td></tr><tr><td colspan="2">Mon Aug 30 22:42:58 2021 JST</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><a class="u-url" href="/qosamu-pages/2021/08/31/qiskit-local-installation.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/qosamu-pages/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/qosamu-pages/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/qosamu-pages/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Awesome QosaJin Blog</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/QosaJin" title="QosaJin"><svg class="svg-icon grey"><use xlink:href="/qosamu-pages/assets/minima-social-icons.svg#github"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
